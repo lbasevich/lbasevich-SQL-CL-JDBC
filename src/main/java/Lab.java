@@ -37,14 +37,52 @@ import util.ConnectionUtil;
 public class Lab {
 
     public void createSong(Song song)  {
-        //write jdbc code here
+
+        try {
+            //retrieve active connection to db
+            Connection connection = ConnectionUtil.getConnection();
+
+            //SQL statement we are going to execute
+            String sql = "insert into songs (title, artist) values ('" + song.getTitle() + "', '" + song.getArtist() + "');";
+
+            //create Statement object
+            Statement statement = connection.createStatement();
+
+            //execute the statement to db
+            statement.executeUpdate(sql);
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Song> getAllSongs(){
         List<Song> songs = new ArrayList<>();
+        
+        try {
+            //retrieve active connection to db
+            Connection connection = ConnectionUtil.getConnection();
+ 
+            String sql = "select * from songs;";
 
-        //write jdbc code here
+            //create the Statement object
+            Statement statement = connection.createStatement();
 
+            //execute the statement and retrieve result set
+            ResultSet rs = statement.executeQuery(sql);
+
+            //loop through each record and add record to user list object
+            while(rs.next()){
+                songs.add(new Song(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            }
+            //NOTE: in the above statement, rs.getString(1) is retrieving column 1 as a string from a record. in our situation, that will get the firstname. Since lastname is in the second column in the table, we retrieve that value by using rs.getString(2);
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return songs;
     }
+
 }
